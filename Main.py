@@ -1,10 +1,14 @@
 from PIL import Image, ImageDraw
 import numpy as np
 import csv
+from os import makedirs, path
 from math import pi, sin, cos, sqrt,dist
 from rich.progress import track
 
-image = Image.open("inputs/kahlo.png")
+image = Image.open("inputs/einstien.png")
+if(image.size[0]>600):
+    image = image.resize((600,int(image.size[1]/image.size[0]*600)))
+
 # weight = Image.open("inputs/einstienWeights.png").convert("L")
 
 bwImage = image.convert("L")
@@ -18,8 +22,8 @@ width,height = arr.shape[0], arr.shape[1]
 draw = ImageDraw.Draw(overlay, "RGBA")
 start_point = (0, 0)
 end_point = (width, height)
-alpha = 0.125
-removeScore = 1.25
+alpha = 0.2
+removeScore = 2.0
 line_color = (0, 0, 0,int(255*alpha))
 line_width = 1
 
@@ -81,7 +85,7 @@ def lowerArray(start, end):
         y = y0 + (y1 - y0) * i / steps
         arr[int(y)][int(x)] *= removeScore
         
-steps = 4000
+steps = 2000
 point = 0
 
 instructions = []
@@ -97,13 +101,17 @@ for i in track(range(steps)):
 image = Image.alpha_composite(image, overlay)
 # image = overlay
 # Convert to RGB before saving
-foldername = "kahlo"
-image.save("savedOutputs/"+foldername+"/render.png")
-overlay.save("savedOutputs/"+foldername+"output/overlay.png")
+superFolderPath = "savedOutputs/"
+foldername = "einstien"
+fullname = superFolderPath + foldername
+if not path.exists(fullname):
+    makedirs(fullname)
 overlay.show()
 image.show()
-with open("savedOutputs/"+foldername+"output/instructions.csv", "w", newline='') as f:
+
+with open(fullname+"/instructions.csv", "w", newline='') as f:
     writer = csv.writer(f)
     writer.writerow("Point #")
     writer.writerows(instructions)
-
+image.save(fullname+"/render.png")
+overlay.save(fullname+"/overlay.png")
