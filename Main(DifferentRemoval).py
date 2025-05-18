@@ -22,8 +22,8 @@ width,height = arr.shape[0], arr.shape[1]
 draw = ImageDraw.Draw(overlay, "RGBA")
 start_point = (0, 0)
 end_point = (width, height)
-alpha = 0.1
-removeScore = 10
+alpha = 0.15
+removeScore = 255*alpha/2
 line_color = (0, 0, 0,int(255*alpha))
 line_width = 1
 
@@ -83,9 +83,9 @@ def lowerArray(start, end):
     for i in range(steps):
         x = x0 + (x1 - x0) * i / steps
         y = y0 + (y1 - y0) * i / steps
-        arr[int(y)][int(x)] *= removeScore
+        arr[int(y)][int(x)] += removeScore
         
-steps = 400
+steps = 4000
 point = 0
 
 instructions = []
